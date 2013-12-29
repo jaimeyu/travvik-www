@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+
+        <meta charset="UTF-8">
+
+        <title>travvik</title>
+
+        <!--Refresh page every 5 minutes -->
+        <META HTTP-EQUIV="refresh" CONTENT="300">
+        
+        <meta name="viewport" content="width=device-width" /> 
+        <script src="webview/js/prefixfree.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="webview/css/style.css">
+    </head>
+
+    <body>
+
+    <main>
+        <section id="inputs">
+            <form action="./" method="get">
+                <input placeholder="route" type="number"  name="routeno" value="%%%_ROUTE_NO_%%%" size="4" />
+
+                <input placeholder="stop" type="number"  name="stopno" value="%%%_STOP_NO_%%%" size="4"/>
+
+                <input value="Go!" type="Submit" />
+                <br/>
+
+                <input id="button-lucky" value="I'm feelin' lucky!" type="button" />
+            </form>
+        </section>
+        
+        
+        <header></header>
+        
+        <div id="columns">
+        %%%_CARDS_%%%
+        
+        <section class="card">
+            <h3>Weather</h3>
+            <iframe marginheight="0" marginwidth="0" name="wxButtonFrame" id="wxButtonFrame" height="150" src="http://btn.weather.ca/weatherbuttons/template7.php?placeCode=CAON0512&category0=Cities&containerWidth=180&btnNo=&backgroundColor=blue&multipleCity=0&citySearch=0&celsiusF=C" align="top" frameborder="0" width="180" scrolling="no" allowTransparency="true"></iframe>
+        </section>
+        <section class="card">
+            <h3>Advertisement</h3>
+            <h3><div class="map">
+                <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                <!-- travvik-card -->
+                <ins class="adsbygoogle"
+                     style="display:inline-block;width:250px;height:250px"
+                     data-ad-client="ca-pub-7746688859597966"
+                     data-ad-slot="4401611004"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+                </div>
+            </h3>
+            <h4><span class="arrival">2</span> minute until advertisement is removed.</h4>
+        </section>
+        </div>
+        
+        <footer>
+            Copyright <a href="http://jaimeyu.com">Jaime Yu</a> 2014.<br/>
+            Images courtesy of <a href="http://www.backgroundlabs.com" title="Background Labs">Background Labs</a>.<br/>
+            For the latest features, try the <a href="http://ottawa.travvik.com/v3">beta at ottawa.travvik.com/v3</a>
+        </footer>
+    </main>
+
+    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
+
+    <script src="webview/js/index.js"></script>
+     <!-- tracker -->
+        <script async type="text/javascript">
+
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-37460197-1']);
+            _gaq.push(['_trackPageview']);
+
+            (function() {
+                var ga = document.createElement('script');
+                ga.type = 'text/javascript';
+                ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(ga, s);
+            })();
+
+        </script>
+
+</body>
+
+</html>

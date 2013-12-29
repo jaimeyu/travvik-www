@@ -1,0 +1,2 @@
+RewriteCond %{QUERY_STRING} (.*)(^|&|%26|%20)a(=|%3D)([^&]+)(.*)$
+RewriteRule ^([^.?]+).json$ %4.php? [L,QSA]
