@@ -201,8 +201,19 @@ if ($routeno != -1 && $stopno != -1) {
 
     //print "<!-- Getting route details for stop... -->";
     $database = new DATABASE($DB_URL, $DB_USER, $DB_PASS, $DB_NAME);
-    $result = $database->getStopFromLatLong((float) $user_lat, (float) $user_long, 0.001);
-//$database->setDebugMode(true);
+    
+    $searchRadius = 0.000;
+    $result = array();
+    while(count(mysqli_fetch_array($result)) == 0 && $searchRadius < 0.05){
+        $searchRadius = $searchRadius + 0.001;
+        $result = $database->getStopFromLatLong((float) $user_lat, (float) $user_long, $searchRadius);
+        //print "count " . count(mysqli_fetch_array($result)) . "<br/>";
+    }
+    
+    // I have a suspecion that mysqli_fetch_array destroys $result as a side effect.
+    $result = $database->getStopFromLatLong((float) $user_lat, (float) $user_long, $searchRadius);
+        
+    //$database->setDebugMode(true);
 
     $list = array(-1);
 
@@ -228,12 +239,12 @@ if ($routeno != -1 && $stopno != -1) {
 
         $result = $database->getStopInCache($stopno);
         if (mysqli_num_rows($result) == 0) {
-            $pullFromCacheStr = "Pulled from oc transpo." . "</br>";
+            $pullFromCacheStr = "Pulled from oc transpo." . "</br>Search radius: " . ($searchRadius / 0.00001)  ." metres.</br>";
             // If not in cache pull and update from OC Transpo.    
             $rawsoap = $curBus2->queryOcTranspo($OC_TRANSPO_STOP_DETAILS_URL, $OC_TRANSPO_APP_KEY, $OC_TRANSPO_APP_ID, $stopno, 0);
             $database->putStopInCache($stopno, $rawsoap);
         } else {
-            $pullFromCacheStr = "Pulled from cache." . "</br>";
+            $pullFromCacheStr = "Pulled from cache.</br>Search radius: " . ($searchRadius / 0.00001)  ." metres.</br>";
             $row = mysqli_fetch_array($result);
             $curBus2->pullSoapData($row['data']);
         }
