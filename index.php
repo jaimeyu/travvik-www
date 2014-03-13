@@ -185,7 +185,7 @@ if ($routeno != -1 && $stopno != -1) {
             $card = str_replace("%%%_ROUTE_%%%", $routeno, $card);
             $card = str_replace("%%%_SRC_%%%", $curBus->nextTrips->StopLabel, $card);
             $card = str_replace("%%%_DST_%%%", $curBus->getTrip($y, $i)->TripDestination, $card);
-            $card = str_replace("%%%_GPS_%%%", $gpsLatLong, $card);
+            $card = str_replace("%%%_GPS_%%%", @$gpsLatLong, $card);
             $card = str_replace("%%%_DIRECTION_%%%", $curBus->getRoute($y)->Direction, $card);
             
             // MAP must be done before GPS'. 
