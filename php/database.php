@@ -25,7 +25,7 @@
 * 
 */
 
-include "./credentials.php";
+include "php/credentials.php";
 
 /**
  * Description of database
