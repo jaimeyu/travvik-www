@@ -112,7 +112,7 @@ $pullFromCacheStr = "None";
 
 $page = file_get_contents("webview/index.template.html");
 
-if ($routeno != -1 && $stopno != -1) {
+if ($stopno != -1) {
 
     //print "<!-- Getting individual bus times for stop... -->";
 // Our the OC Transpo utility class.
@@ -124,8 +124,13 @@ if ($routeno != -1 && $stopno != -1) {
     if (mysqli_num_rows($result) == 0) {
         //echo "<br/> No rows found.";
         $pullFromCacheStr = "Pulled from OC TRANSPO.";
+
+        // If a route wasn't given then find all routes;
+        $apiUrl = ($routeno > 0 ? $OC_TRANSPO_TRIP_URL : $OC_TRANSPO_TRIP_ALL_ROUTES_URL);
+
         // If not in cache pull and update from OC Transpo.    
-        $rawsoap = $curBus->queryOcTranspo($OC_TRANSPO_TRIP_URL, $OC_TRANSPO_APP_KEY, $OC_TRANSPO_APP_ID, $stopno, $routeno);
+        $rawsoap = $curBus->queryOcTranspo($apiUrl, $OC_TRANSPO_APP_KEY, $OC_TRANSPO_APP_ID, $stopno, $routeno);
+
         //$js = $curBus->endodeJson($curBus->dataset);
 //    echo $rawsoap;
         $database->putTripInCache($routeno, $stopno, addslashes($rawsoap));
