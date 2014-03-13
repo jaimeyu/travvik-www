@@ -73,7 +73,7 @@ $GMAPS = "<div class=\"map\">"
         . "</a></div>";
 
 $CARD = " <section class=\"card\"><h1><strong><span class=\"arrival\">"
-        . "%%%_MINUTES_%%%</span> minutes</strong> until the %%%_BUS_TYPE_%%% from "
+        . "%%%_MINUTES_%%%</span> minutes</strong> until the %%%_ROUTE_%%% (%%%_BUS_TYPE_%%%) from "
         . "%%%_SRC_%%% to %%%_DST_%%% arrives.</h1> "
         . "%%%_MAP_%%%</section>";
 
@@ -187,7 +187,7 @@ if ($stopno != -1) {
             // Next arrival in...
             $card = str_replace("%%%_MINUTES_%%%", $arrival, $card);
             $card = str_replace("%%%_BUS_TYPE_%%%", $busType, $card);
-            $card = str_replace("%%%_ROUTE_%%%", $routeno, $card);
+            $card = str_replace("%%%_ROUTE_%%%", $curBus->busRoute->RouteNo, $card);
             $card = str_replace("%%%_SRC_%%%", $curBus->nextTrips->StopLabel, $card);
             $card = str_replace("%%%_DST_%%%", $curBus->getTrip($y, $i)->TripDestination, $card);
             $card = str_replace("%%%_GPS_%%%", @$gpsLatLong, $card);
