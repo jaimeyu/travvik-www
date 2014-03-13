@@ -142,9 +142,9 @@ if ($routeno != -1 && $stopno != -1) {
 
     for ($i = 0; $i < 3; $i++) {
         for ($y = 0; $y < 3; $y++) {
-            $arrival = $curBus->getTrip($y, $i)->AdjustedScheduleTime;
-            $gpsLat = $curBus->getTrip($y, $i)->Latitude;
-            $gpsLong = $curBus->getTrip($y, $i)->Longitude;
+            $arrival = @$curBus->getTrip($y, $i)->AdjustedScheduleTime;
+            $gpsLat = @$curBus->getTrip($y, $i)->Latitude;
+            $gpsLong = @$curBus->getTrip($y, $i)->Longitude;
             //print "<!-- arrival: $arrival -->\n";
             //print "<!-- gpsLat: $gpsLat -->\n";
             //print "<!-- gpsLong: $gpsLong -->\n";
@@ -204,7 +204,7 @@ if ($routeno != -1 && $stopno != -1) {
     
     $searchRadius = 0.000;
     $result = array();
-    while(count(mysqli_fetch_array($result)) == 0 && $searchRadius < 0.05){
+    while(count(@mysqli_fetch_array($result)) == 0 && $searchRadius < 0.05){
         $searchRadius = $searchRadius + 0.001;
         $result = $database->getStopFromLatLong((float) $user_lat, (float) $user_long, $searchRadius);
         //print "count " . count(mysqli_fetch_array($result)) . "<br/>";

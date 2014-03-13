@@ -51,6 +51,9 @@ class OCTAPI {
     }
 
     function encodeFieldsToUrl($fields) {
+
+        $fields_string = "";
+
         //url-ify the data for the POST
         foreach ($fields as $key => $value) {
             $fields_string .= $key . '=' . $value . '&';
@@ -82,7 +85,7 @@ class OCTAPI {
         $this->dataset = $this->dataset[0];
 
         $this->nextTrips = $this->dataset->GetNextTripsForStopResponse->GetNextTripsForStopResult;
-        $this->busRoute = $this->nextTrips->Route->RouteDirection;
+        $this->busRoute = @$this->nextTrips->Route->RouteDirection;
         return $this->dataset;
     }
 
@@ -132,7 +135,7 @@ class OCTAPI {
 
     // Print to JSON
     function generate_jsonp($data) {
-        if (preg_match('/\W/', $_GET['callback'])) {
+        if (preg_match('/\W/', @$_GET['callback'])) {
             // if $_GET['callback'] contains a non-word character,
             // this could be an XSS attack.
             header('HTTP/1.1 400 Bad Request');
