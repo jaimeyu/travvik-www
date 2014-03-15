@@ -73,7 +73,7 @@ $GMAPS = "<div class=\"map\">"
         . "</a></div>";
 
 $CARD = " <section class=\"card\"><h1><strong><span class=\"arrival\">"
-        . "%%%_MINUTES_%%%</span> minutes</strong> until the %%%_BUS_TYPE_%%% from "
+        . "%%%_MINUTES_%%%</span> minutes</strong> until the %%%_ROUTE_%%% (%%%_BUS_TYPE_%%%) from "
         . "%%%_SRC_%%% to %%%_DST_%%% arrives.</h1> "
         . "%%%_MAP_%%%</section>";
 
@@ -112,7 +112,7 @@ $pullFromCacheStr = "None";
 
 $page = file_get_contents("webview/index.template.html");
 
-if ($routeno != -1 && $stopno != -1) {
+if ($stopno != -1) {
 
     //print "<!-- Getting individual bus times for stop... -->";
 // Our the OC Transpo utility class.
@@ -124,8 +124,13 @@ if ($routeno != -1 && $stopno != -1) {
     if (mysqli_num_rows($result) == 0) {
         //echo "<br/> No rows found.";
         $pullFromCacheStr = "Pulled from OC TRANSPO.";
+
+        // If a route wasn't given then find all routes;
+        $apiUrl = ($routeno > 0 ? $OC_TRANSPO_TRIP_URL : $OC_TRANSPO_TRIP_ALL_ROUTES_URL);
+
         // If not in cache pull and update from OC Transpo.    
-        $rawsoap = $curBus->queryOcTranspo($OC_TRANSPO_TRIP_URL, $OC_TRANSPO_APP_KEY, $OC_TRANSPO_APP_ID, $stopno, $routeno);
+        $rawsoap = $curBus->queryOcTranspo($apiUrl, $OC_TRANSPO_APP_KEY, $OC_TRANSPO_APP_ID, $stopno, $routeno);
+
         //$js = $curBus->endodeJson($curBus->dataset);
 //    echo $rawsoap;
         $database->putTripInCache($routeno, $stopno, addslashes($rawsoap));
@@ -142,9 +147,9 @@ if ($routeno != -1 && $stopno != -1) {
 
     for ($i = 0; $i < 3; $i++) {
         for ($y = 0; $y < 3; $y++) {
-            $arrival = $curBus->getTrip($y, $i)->AdjustedScheduleTime;
-            $gpsLat = $curBus->getTrip($y, $i)->Latitude;
-            $gpsLong = $curBus->getTrip($y, $i)->Longitude;
+            $arrival = @$curBus->getTrip($y, $i)->AdjustedScheduleTime;
+            $gpsLat = @$curBus->getTrip($y, $i)->Latitude;
+            $gpsLong = @$curBus->getTrip($y, $i)->Longitude;
             //print "<!-- arrival: $arrival -->\n";
             //print "<!-- gpsLat: $gpsLat -->\n";
             //print "<!-- gpsLong: $gpsLong -->\n";
@@ -182,10 +187,10 @@ if ($routeno != -1 && $stopno != -1) {
             // Next arrival in...
             $card = str_replace("%%%_MINUTES_%%%", $arrival, $card);
             $card = str_replace("%%%_BUS_TYPE_%%%", $busType, $card);
-            $card = str_replace("%%%_ROUTE_%%%", $routeno, $card);
+            $card = str_replace("%%%_ROUTE_%%%", $curBus->busRoute->RouteNo, $card);
             $card = str_replace("%%%_SRC_%%%", $curBus->nextTrips->StopLabel, $card);
             $card = str_replace("%%%_DST_%%%", $curBus->getTrip($y, $i)->TripDestination, $card);
-            $card = str_replace("%%%_GPS_%%%", $gpsLatLong, $card);
+            $card = str_replace("%%%_GPS_%%%", @$gpsLatLong, $card);
             $card = str_replace("%%%_DIRECTION_%%%", $curBus->getRoute($y)->Direction, $card);
             
             // MAP must be done before GPS'. 
@@ -204,7 +209,7 @@ if ($routeno != -1 && $stopno != -1) {
     
     $searchRadius = 0.000;
     $result = array();
-    while(count(mysqli_fetch_array($result)) == 0 && $searchRadius < 0.05){
+    while(count(@mysqli_fetch_array($result)) == 0 && $searchRadius < 0.05){
         $searchRadius = $searchRadius + 0.001;
         $result = $database->getStopFromLatLong((float) $user_lat, (float) $user_long, $searchRadius);
         //print "count " . count(mysqli_fetch_array($result)) . "<br/>";

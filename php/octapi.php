@@ -25,7 +25,7 @@
 * 
 */
 
-include "credentials.php";
+include "php/credentials.php";
 
 class OCTAPI {
 
@@ -51,6 +51,9 @@ class OCTAPI {
     }
 
     function encodeFieldsToUrl($fields) {
+
+        $fields_string = "";
+
         //url-ify the data for the POST
         foreach ($fields as $key => $value) {
             $fields_string .= $key . '=' . $value . '&';
@@ -81,9 +84,26 @@ class OCTAPI {
         $this->dataset = $this->dataset->xpath('/soap:Envelope/soap:Body');
         $this->dataset = $this->dataset[0];
 
-        $this->nextTrips = $this->dataset->GetNextTripsForStopResponse->GetNextTripsForStopResult;
-        $this->busRoute = $this->nextTrips->Route->RouteDirection;
-        return $this->dataset;
+        if ($this->dataset->GetNextTripsForStopResponse->getName() != "") {
+            $this->nextTrips = $this->dataset->GetNextTripsForStopResponse->GetNextTripsForStopResult;
+
+            $this->busRoute = $this->nextTrips->Route->RouteDirection;
+
+
+            return $this->dataset;
+        }
+        else if ($this->dataset->GetRouteSummaryForStopResponse->getName() != "") {
+            $this->nextTrips = $this->dataset->GetRouteSummaryForStopResponse->GetRouteSummaryForStopResult;
+
+            $this->busRoute = $this->nextTrips->Routes->Route;
+
+            //print_r($this->dataset);
+            //exit();
+
+            return $this->dataset;        
+        }
+
+
     }
 
     function getNbOfActiveRoutes() {
@@ -106,11 +126,16 @@ class OCTAPI {
 
     function getTrip($routeIndex, $tripIndex) {
 
+
+        // Not really sure what this was trying to do..
+        /*
         if (($routeIndex >= 0) &&
                 ($routeIndex < $this->getNbOfTrips($routeIndex)) &&
                 ($tripIndex >= 0) &&
                 ($tripIndex < $this->getNbOfTrips($routeIndex))
-        ) {
+        ) {*/
+        if (true) {
+
             $item = $this->busRoute[$routeIndex]->Trips->Trip[$tripIndex];
             if ($item == null) {
                 return 0;
@@ -132,7 +157,7 @@ class OCTAPI {
 
     // Print to JSON
     function generate_jsonp($data) {
-        if (preg_match('/\W/', $_GET['callback'])) {
+        if (preg_match('/\W/', @$_GET['callback'])) {
             // if $_GET['callback'] contains a non-word character,
             // this could be an XSS attack.
             header('HTTP/1.1 400 Bad Request');
